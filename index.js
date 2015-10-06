@@ -15,8 +15,13 @@ exports.handler = function(event, context) {
   var commandName = event.command.replace("/", ""); // e.g. 'weather'
   var command = commands[commandName];
   if (!helpers.isDefined(command)) context.fail("Unknown command.");
+  if (!helpers.isDefined(settings)) var settings = {};
+  if (!helpers.isDefined(settings[commandName])) settings[commandName] = {};
+  if (helpers.isDefined(settings[commandName].token)) {
+	context.fail('No token set. Set the token in settings.js');
+  }
   if (settings[commandName].token !== event.token) {
-    context.fail('Invalid token');
+    context.fail('Invalid token.');
   }
   if (!helpers.isDefined(command.hostname)) {
     context.fail("Hostname not set.");

@@ -27,12 +27,12 @@ your apps or retrieve open issues without every leaving your Slack room!
    In the [API Gateway](https://aws.amazon.com/api-gateway/) console create an API with a
    GET method. Then,
    
-   * **Set your Lambda function**. Go to *Integration Request*. For *Integration Type*,
-     choose *Lambda Function* and set *Lambda Region* and *Lambda Function* to the
-     appropriate values.
+   * **Set your Lambda function**. Go to *Integration Request*. For Integration Type,
+     choose "Lambda Function" and set Lambda Region and Lambda Function to whatever is
+     appropriate for your Lambda function.
      
    * **Set the Mapping Template**. While still under *Integration Request*, expand
-     *Mapping Templates*. Click the *application/json* Content Type. Set the template
+     Mapping Templates. Click the application/json Content Type. Set the template
      to "Mapping template" by clicking the pencil icon and set it to the folllowing JSON:
      
      ```
@@ -49,7 +49,7 @@ your apps or retrieve open issues without every leaving your Slack room!
     }
     ```
    
-   * **Set the CORS configuration** by clicking *Method Response*, expanding 200 HTTP Status,
+   * **Set the CORS configuration**. Click *Method Response*, expanding 200 HTTP Status,
      and adding the following three headers under "Response Headers for 200": `Access-Control-Allow-Headers`,
      `Access-Control-Allow-Methods`, and `Access-Control-Allow-Origin`. Then, go back to
      *Integration Response* and expand the 200 Method Response. Expand "Header Mappings"
@@ -60,8 +60,6 @@ your apps or retrieve open issues without every leaving your Slack room!
      * `Access-Control-Allow-Origin: '*'`
      
      Be sure to add the single quotes around the mapping values!
-   
-   * **Set the mapping template** by clicking *Integration Request"
 
 3. Create a slash command
 
@@ -77,8 +75,21 @@ module.exports = function() {
   // command configuration goes here
 }
 ```
+#### Settings and Tokens
+In a file `settings.js`, create a settings object for each command you create. You must provide
+the slash command token for each command you create. e.g.
 
-Command configuration
+``` settings.js
+module.exports = {
+  'weather': {
+    token: 'myCoolSlashCommandToken'
+  }
+}
+```
+
+Set any other sensitive information here as well.
+
+####Command configuration
 
 Package your lambda function:
 
