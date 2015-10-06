@@ -27,17 +27,41 @@ your apps or retrieve open issues without every leaving your Slack room!
    In the [API Gateway](https://aws.amazon.com/api-gateway/) console create an API with a
    GET method. Then,
    
+   * **Set your Lambda function**. Go to *Integration Request*. For *Integration Type*,
+     choose *Lambda Function* and set *Lambda Region* and *Lambda Function* to the
+     appropriate values.
+     
+   * **Set the Mapping Template**. While still under *Integration Request*, expand
+     *Mapping Templates*. Click the *application/json* Content Type. Set the template
+     to "Mapping template" by clicking the pencil icon and set it to the folllowing JSON:
+     
+     ```
+     {
+       "token" : "$input.params('token')",
+       "team_id" : "$input.params('team_id')",
+       "team_domain" : "$input.params('team_domain')",
+       "channel_id" : "$input.params('channel_id')",
+       "channel_name" : "$input.params('channel_name')",
+       "user_id" : "$input.params('user_id')",
+       "user_name" : "$input.params('user_name')",
+       "command" : "$input.params('command')",
+       "text" : "$input.params('text')"
+    }
+    ```
+   
    * **Set the CORS configuration** by clicking *Method Response*, expanding 200 HTTP Status,
-     adding the following three headers under "Response Headers for 200": `Access-Control-Allow-Headers`,
+     and adding the following three headers under "Response Headers for 200": `Access-Control-Allow-Headers`,
      `Access-Control-Allow-Methods`, and `Access-Control-Allow-Origin`. Then, go back to
      *Integration Response* and expand the 200 Method Response. Expand "Header Mappings"
      and set the following Mapping Values for the Response Headers that we just added.
      
-     * Access-Control-Allow-Headers: 'Content-Type,X-Amz-Date,Authorization'
-     * Access-Control-Allow-Methods: 'GET'
-     * Access-Control-Allow-Origin: '*'
+     * `Access-Control-Allow-Headers: 'Content-Type,X-Amz-Date,Authorization'`
+     * `Access-Control-Allow-Methods: 'GET'`
+     * `Access-Control-Allow-Origin: '*'`
      
      Be sure to add the single quotes around the mapping values!
+   
+   * **Set the mapping template** by clicking *Integration Request"
 
 3. Create a slash command
 
