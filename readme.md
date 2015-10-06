@@ -75,11 +75,28 @@ module.exports = function() {
   // command configuration goes here
 }
 ```
+
+####Command configuration
+  When your slash command is invokved, Lambda will send an HTTP(S) request which is determined by this
+  configuration.
+  
+  Each option can either be value, or a function that returns a value. If a function, you have access
+  to the following paramters:
+  
+  * options: The value of the `parseText` option, described below.
+  * event
+  * context
+  
+  * **hostname** (required):
+  * **path** (required):
+  * **method**: The HTTP method to use. Defaults to `GET`.
+  * **port**: The port to 
+
 #### Settings and Tokens
 In a file `settings.js`, create a settings object for each command you create. You must provide
 the slash command token for each command you create. e.g.
 
-``` settings.js
+```
 module.exports = {
   'weather': {
     token: 'myCoolSlashCommandToken'
@@ -89,9 +106,7 @@ module.exports = {
 
 Set any other sensitive information here as well.
 
-####Command configuration
-
-Package your lambda function:
+####Package your lambda function:
 
 `$ grunt lambda_package`
 
