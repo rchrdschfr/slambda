@@ -166,6 +166,22 @@ Set any other sensitive information here as well, such as an auth string.
 
 #### Test the Lambda Function
 
+Create an `event.json` file which contains the event information to send to Lambda. For our purposes it should look like this:
+
+```
+{
+    "token": <Slash Command Token>,
+    "team_id": <Slack Team ID>,
+    "team_domain": <Slack Team Domain>,
+    "channel_id": <Slack Channel ID>,
+    "channel_name": <Slack Channel Name>,
+    "user_id": <Slack User ID>,
+    "user_name": <Slack User Name.,
+    "command": <Command (e.g. "/weather"),
+    "text": <Text (e.g. "21146 -country USA --short)
+}
+```
+
 `$ grunt lambda_invoke`
 
 #### Package the Lambda Function

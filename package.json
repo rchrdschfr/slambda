@@ -21,6 +21,7 @@
   "author": "Richard Schaefer <rchrdschfr@gmail.com> (http://rchrdschfr.com)",
   "license": "ISC",
   "devDependencies": {
+    "grunt": "~0.4.5",
     "grunt-aws-lambda": "^0.10.0"
   }
 }
