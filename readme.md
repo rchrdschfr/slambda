@@ -1,7 +1,8 @@
 #slambda
 
 Use Slack's Slash Commands to talk to an Amazon Lambda function. Do cool things like deploy
-your apps or retrieve open issues without ever   leaving your Slack room!
+your apps or retrieve open issues without ever leaving your Slack room! One
+Lambda Function/API Gateway pair handles all your channel's Slash Commands.
 
 ### Requirements
 **Create a Lambda function**
@@ -71,20 +72,59 @@ module.exports = function() {
 ```
 
 ####Command configuration
-  When your Slash Command is invokved, Lambda will send an HTTP(S) request which is determined by this
-  configuration.
+When your Slash Command is invokved, Lambda will send an HTTP(S) request which is determined by this
+configuration.
   
-  Each option can either be value, or a function that returns a value. If a function, you have access
-  to the following paramters:
-  
-  * options: The value of the `parseText` option, described below.
-  * event
-  * context
-  
-  * **hostname** (required):
-  * **path** (required):
-  * **method**: The HTTP method to use. Defaults to `GET`.
-  * **port**: The port to 
+Each option can either be value, or a function that returns a value. If a function, you have access
+to the `options` parameter, which represents the text of the Slash Command parsed according to
+`parseText` option described below.
+
+* **hostname** (required): the hostname to send the request to. e.g. 'api.google.com'
+* **path** (required): the path to send the request to. When combined with the hostname option,
+                       creates a full URL to send the request.
+* **method**: The HTTP method to use. Defaults to `GET`.
+* **port**: The port number to use. Defaults to 443.
+* **protocol**: The request protocol. Defaults to 'https'
+* **auth**: The auth string to use if the API requires it. Default is an empty string.
+* **body**: The body of the request. Default is an empty string.
+* **return**: An object representing the request to be sent once the response to the initial request
+              is received. All the above options apply.
+* **parseText**: a function which accepts the text of the slash command as a parameter, and returns
+                 an object representing the parsed value of that string to be made available to the
+                 configuration options described above.
+                 
+* In addition to the `options` parameter, the `event` and `context` parameters are also provided to each option.
+
+**Example command configuration**
+```
+module.exports = {
+  hostname: 'api.openweathermap.org',
+  port: 80,
+  method: 'GET',
+  protocol: 'http',
+  path: function(options, event, context) {
+    var path = "/data/2.5/weather?zip=" + options.directive;
+    if (helpers.isDefined(options.country)) {
+      path += "," + options.country;
+	}
+    return path;
+  },
+  return: {
+    path: '/services/T024Z4ACR/B0BFTLKCJ/XZRz7IgUU8LANn5BHmd0vIKf',
+	body: function (response, options, event, context) {
+      var weather = JSON.parse(response).weather;
+      var weatherText = "[" + weather[0].main + "] " + weather[0].description;
+      var channel = "@" + event.user_name;
+      var postData = JSON.stringify({
+        text: weatherText,
+        channel: channel
+      });
+
+      return postData;
+	}
+  },
+};
+```
 
 #### Settings and Tokens
 
@@ -101,16 +141,15 @@ module.exports = {
 
 Set any other sensitive information here as well, such as an auth string.
 
-####Package your lambda function:
+#### Package the lambda function:
 
 `$ grunt lambda_package`
 
 It will then be stored as a ZIP file in the `dist` folder.
 
-###### Deploy the Lambda Function
-You can use Grunt to deploy your Lambda function if you set your AWS credentials like so:
-
-In the project folder, create a file `.aws/credentials`. Set your AWS access key
+#### Deploy the Lambda Function
+You can use Grunt to deploy your Lambda function. In the project folder,
+create a file `.aws/credentials`. Set your AWS access key
 and secret access key, like so:
    
 ```
@@ -123,6 +162,6 @@ See [this document](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-confi
 
 Then type
 
-`$grunt lambda_deploy`
+`$ grunt lambda_deploy`
 
 You can also upload the package manually.
