@@ -1,9 +1,15 @@
 var settings = require('./settings.js');
-global.settings = settings; // make the settings available to the modules
 var helpers = require('./helpers.js');
-global.helpers = helpers; // make the helpers available to the modules
+
+// set some globals so everyone can have access
+global.settings = settings;
+global.helpers = helpers;
+
+// we can use either HTTP or HTTPS
 var https = require('https');
 var http = require('http');
+
+// load the slambda modules
 var requireDir = require('require-dir');
 var commands = requireDir('./commands');
 
@@ -15,9 +21,9 @@ exports.handler = function(event, context) {
   var commandName = event.command.replace("/", ""); // e.g. 'weather'
   var command = commands[commandName];
   if (!helpers.isDefined(command)) context.fail("Unknown command.");
-  if (!helpers.isDefined(settings)) var settings = {};
-  if (!helpers.isDefined(settings[commandName])) settings[commandName] = {};
-  if (helpers.isDefined(settings[commandName].token)) {
+  if (!helpers.isDefined(global.settings)) global.settings = {};
+  if (!helpers.isDefined(global.settings[commandName])) global.settings[commandName] = {};
+  if (!helpers.isDefined(global.settings[commandName].token)) {
 	context.fail('No token set. Set the token in settings.js');
   }
   if (settings[commandName].token !== event.token) {
@@ -32,7 +38,7 @@ exports.handler = function(event, context) {
 
   // at this point everything should be go good to go
 
-  // parse command options
+  // parse the command text
   var commandOptions;
   if (helpers.isDefined(command.parseText)) {
     if (helpers.isFunction(command.parseText)) {
@@ -42,49 +48,62 @@ exports.handler = function(event, context) {
   else {
     commandOptions = helpers.parseText(event.text);
   }
-
-
-  // TODO: add all options available
+  
+  // set the request options
   var requestOptions = {
-    hostname: helpers.getRequestOption('hostname', command, commandOptions, event, context),
-	path: helpers.getRequestOption('path', command, commandOptions, event, context),
-	port: helpers.getRequestOption('port', command, commandOptions, event, context),
-	method: helpers.getRequestOption('method', command, commandOptions, event, context),
-	auth: helpers.getRequestOption('auth', command, commandOptions, event, context),
-    body: helpers.getRequestOption('body', command, commandOptions, event, context)
+    method: 'GET',
+	port: 443,
+	auth: '',
+	body: '',
   };
-
-  var requestProtocol = helpers.getRequestOption('protocol', command, commandOptions, event, context) == 'https' ? https : http;
+  for (var key in command) {
+	if (['protocol', 'return'].indexOf(key) !== -1) {
+	  continue;
+	}
+	requestOptions[key] = helpers.getRequestOption(key, command, commandOptions, event, context);
+  }
+  var requestProtocolOption = helpers.isDefined(command.protocol) ? command.protocol : 'https';
+  requestProtocol = requestProtocolOption == 'https' ? https : http;
+  
+  // send the request
   var request = requestProtocol.request(requestOptions, function(response) {
 	var responseBody = '';
 	console.log('Status:', response.statusCode);
 	console.log('Headers:', JSON.stringify(response.headers));
 	response.setEncoding('utf8');
+	
+	// grab the response body
 	response.on('data', function(chunk) {
 	  responseBody += chunk;
 	});
 	
+	// do something with the response
 	response.on('end', function() {
-      console.log('Successfully processed HTTPS response');
+      console.log('Successfully processed HTTP(S) response');
 	  if (helpers.isDefined(command.return)) {
 		if (!helpers.isDefined(command.return)) command.return = {};
-		if (!helpers.isDefined(command.return.hostname)) {
-		  context.fail("Hostname for the return request not set.");
-		}
         if (!helpers.isDefined(command.return.path)) {
 		  context.fail("Path for the return request not set.");
 		}
-			
+		
 		var returnOptions = {
-		  hostname: helpers.getReturnRequestOption('hostname', command, responseBody, commandOptions, event, context),
-		  path: helpers.getReturnRequestOption('path', command, responseBody, commandOptions, event, context),
-		  port: helpers.getReturnRequestOption('port', command, responseBody, commandOptions, event, context),
-		  method: helpers.getReturnRequestOption('method', command, responseBody, commandOptions, event, context),
-		  auth: helpers.getReturnRequestOption('auth', command, responseBody, commandOptions, event, context),
-		  body: helpers.getReturnRequestOption('body', command, responseBody, commandOptions, event, context)
+	      hostname: 'hooks.slack.com',
+		  port: 443,
+		  method: 'POST',
+		  auth: '',
+		  body: ''
 		};
-		var returnRequestProtocol = helpers.getReturnRequestOption('protocol', command, responseBody, commandOptions, event, context) == 'https' ? https : http;
-	    var returnRequest = returnRequestProtocol.request(returnOptions, function(returnResponse) {
+		for (var key in command.return) {
+		  if (['protocol'].indexOf(key) !== -1) {
+			continue;
+		  }
+		  returnOptions[key] = helpers.getRequestOption(key, command, commandOptions, event, context, responseBody);
+		};
+        
+		var returnRequestProtocolOption = helpers.isDefined(command.return.protocol) ? command.return.protocol : 'https';
+        returnRequestProtocol = returnRequestProtocolOption == 'https' ? https : http;
+		
+		var returnRequest = returnRequestProtocol.request(returnOptions, function(returnResponse) {
 		  var returnResponseBody = "";
 		  returnResponse.setEncoding('utf8');
 		  returnResponse.on('data', function (chunk) {

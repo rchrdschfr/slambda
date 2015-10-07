@@ -5,74 +5,27 @@ module.exports = {
   isFunction: function(data) {
     return typeof data == 'function';
   },
-  getRequestOption: function(name, command, options, event, context) {
+  getRequestOption: function(name, command, options, event, context, response) {
   	var isDefined = function(data) { return !(typeof data == 'undefined'); }
   	var isFunction = function(data) { return typeof data == 'function'; }
-
-  	if (isDefined(command[name])) {
-      if (isFunction(command[name])) {
-      	return command[name](options, event, context);
+    
+    var object = isDefined(response) ? command.return : command;
+    
+  	if (isDefined(object[name])) {
+      if (isFunction(object[name])) {
+        if (isDefined(response)) {
+          return object[name](response, options, event, context);
+        }
+        else {
+          return object[name](options, event, context);
+        }
       }
       else {
-      	return command[name];
+      	return object[name];
       }
   	}
   	else {
-  	  switch (name) {
-  	  	case 'port':
-  	  	  return 443;
-  	  	  break;
-  	  	case 'method':
-  	  	  return 'GET';
-  	  	  break;
-  	  	case 'auth':
-  	  	  return '';
-  	  	  break;
-  	  	case 'body':
-  	  	  return '';
-  	  	  break;
-        case 'protocol':
-          return 'https';
-          break;
-  	  	default:
-  	  	  return '';
-  	  	  break;
-  	  }
-  	}
-  },
-  getReturnRequestOption: function(name, command, response, options, event, context) {
-  	var isDefined = function(data) { return !(typeof data == 'undefined'); }
-  	var isFunction = function(data) { return typeof data == 'function'; }
-
-  	if (isDefined(command.return[name])) {
-      if (isFunction(command.return[name])) {
-      	return command.return[name](options, response, event, context);
-      }
-      else {
-      	return command.return[name];
-      }
-  	}
-  	else {
-  	  switch (name) {
-  	  	case 'port':
-  	  	  return 443;
-  	  	  break;
-  	  	case 'method':
-  	  	  return 'GET';
-  	  	  break;
-  	  	case 'auth':
-  	  	  return '';
-  	  	  break;
-  	  	case 'body':
-  	  	  return '';
-  	  	  break;
-        case 'protocol':
-          return 'https';
-          break;
-  	  	default:
-  	  	  return '';
-  	  	  break;
-  	  }
+  	  return '';
   	}
   },
   parseText: function(text) {
