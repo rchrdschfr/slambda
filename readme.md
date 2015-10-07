@@ -4,19 +4,6 @@ Use Slack's slash commands to talk to an Amazon Lambda function. Do cool things 
 your apps or retrieve open issues without ever   leaving your Slack room!
 
 ### Requirements
-1. Set your AWS credentials
-
-   In the project folder, create a file `.aws/credentials`. Set your AWS access key
-   and secret access key, like so:
-   
-   ```
-   [default]
-   aws_access_key_id = <YOUR_ACCESS_KEY_ID>
-   aws_secret_access_key = <YOUR_SECRET_ACCESS_KEY>
-   ```
-   
-   See [this document](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html) for more information.
-   
 1. Create a Lambda function
 
    Sign-in to your AWS console and create a Lambda function.
@@ -93,6 +80,19 @@ module.exports = function() {
   * **port**: The port to 
 
 #### Settings and Tokens
+You can use Grunt to deploy your Lambda function if you set your AWS credentials like so:
+
+In the project folder, create a file `.aws/credentials`. Set your AWS access key
+and secret access key, like so:
+   
+```
+[default]
+aws_access_key_id = <YOUR_ACCESS_KEY_ID>
+aws_secret_access_key = <YOUR_SECRET_ACCESS_KEY>
+```
+   
+See [this document](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html) for more information.
+   
 In a file `settings.js`, create a settings object for each command you create. You must provide
 the slash command token for each command. e.g.
 
