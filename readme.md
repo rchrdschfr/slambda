@@ -88,14 +88,16 @@ to the `options` parameter, which represents the text of the Slash Command parse
 * **auth**: The auth string to use if the API requires it. Default is an empty string.
 * **body**: The body of the request. Default is an empty string.
 * **return**: An object representing the request to be sent once the response to the initial request
-              is received. All the above options apply.
+              is received. All the above options apply, except the `hostname` default is `hooks.slack.com`
+              and the default method is `POST`.
 * **parseText**: a function which accepts the text of the slash command as a parameter, and returns
                  an object representing the parsed value of that string to be made available to the
                  configuration options described above.
                  
 * In addition to the `options` parameter, the `event` and `context` parameters are also provided to each option.
 
-**Example command configuration**
+**Example slambda module configuration**
+###### weather.js
 ```
 module.exports = {
   hostname: 'api.openweathermap.org',
@@ -124,6 +126,25 @@ module.exports = {
 	}
   },
 };
+```
+
+#### Default parseText option
+By default, Slash Command text is parsed with the following rules:
+* All text before the first space represents a `directive`.
+* After the directive, you can specify options
+  * Single-dash-prefix represents a variable to be assigned the value after the space immediate after it
+  * Double-dash-prefexi represents a varaible to be assigned the boolean value `true`
+  
+e.g.
+`/weather 21146 -country USA --short`
+
+returns an `options` object which looks like this:
+```
+{
+  directive: '21146',
+  country: 'USA',
+  short: true
+}
 ```
 
 #### Settings and Tokens
