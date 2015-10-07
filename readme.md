@@ -1,7 +1,7 @@
 #slambda
 
 Use Slack's slash commands to talk to an Amazon Lambda function. Do cool things like deploy
-your apps or retrieve open issues without every leaving your Slack room!
+your apps or retrieve open issues without ever   leaving your Slack room!
 
 ### Requirements
 1. Set your AWS credentials
@@ -94,7 +94,7 @@ module.exports = function() {
 
 #### Settings and Tokens
 In a file `settings.js`, create a settings object for each command you create. You must provide
-the slash command token for each command you create. e.g.
+the slash command token for each command. e.g.
 
 ```
 module.exports = {
