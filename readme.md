@@ -58,13 +58,13 @@ team's Slack. On the configuration page, set your command's URL to whatever you 
 URL is from your API Gateway. Set the method to `GET`.
 
 
-###Useage
+##Useage
 
 For each Slash Command you have set up, create a file in the `commands` folder with the same
 name as the Slash Command. For example, if you have a `/weather` Slash Command, create a file
 called `weather.js`. Your file should export an object describing the command, like so:
 
-weather.js
+###### weather.js
 ```
 module.exports = function() {
   // command configuration goes here
@@ -132,7 +132,7 @@ module.exports = {
 By default, Slash Command text is parsed with the following rules:
 
 * All text before the first space represents a `directive`.
-* After the directive, you can specify options
+* After the `directive`, you can specify options
   * Single-dash-prefix represents a variable to be assigned the value after the space immediate after it
   * Double-dash-prefexi represents a varaible to be assigned the boolean value `true`
   
@@ -153,6 +153,7 @@ returns an `options` object which looks like this:
 In a file `settings.js`, create a settings object for each command you create. You must provide
 the Slash Command token for each command. e.g.
 
+###### settings.js
 ```
 module.exports = {
   'weather': {
@@ -165,7 +166,7 @@ Set any other sensitive information here as well, such as an auth string.
 
 #### Test the Lambda Function
 
-`$ grung lambda_invoke`
+`$ grunt lambda_invoke`
 
 #### Package the Lambda Function
 
