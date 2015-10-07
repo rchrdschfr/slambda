@@ -4,9 +4,7 @@
   "description": "Talk to Amazon Lambda via Slack's slash commands.",
   "main": "index.js",
   "dependencies": {
-    "require-dir": "^0.3.0",
-    "grunt": "~0.4.5",
-    "grunt-aws-lambda": "^0.10.0"
+    "require-dir": "^0.3.0"
   },
   "bundledDependencies": [
     "require-dir"
