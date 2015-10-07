@@ -130,6 +130,7 @@ module.exports = {
 
 #### Default parseText option
 By default, Slash Command text is parsed with the following rules:
+
 * All text before the first space represents a `directive`.
 * After the directive, you can specify options
   * Single-dash-prefix represents a variable to be assigned the value after the space immediate after it
@@ -162,7 +163,11 @@ module.exports = {
 
 Set any other sensitive information here as well, such as an auth string.
 
-#### Package the lambda function:
+#### Test the Lambda Function
+
+`$ grung lambda_invoke`
+
+#### Package the Lambda Function
 
 `$ grunt lambda_package`
 
