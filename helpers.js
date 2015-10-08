@@ -38,6 +38,10 @@ module.exports = {
   	var jump = 1;
   	var dashCount;
   	var option;
+    var firstChar = "";
+    var lastChar = "";
+    var j = 0;
+    var selection;
   	for (var i = 0; i < options.length; i += jump) {
   	  jump = 1;
   	  dashCount = 0;
@@ -47,12 +51,22 @@ module.exports = {
         dashCount++;
   	  }
   	  if (dashCount == 1) {
-        returnOptions[option] = options[i+1];
-        jump = 1;
-  	  }
-  	  else if (dashCount == 2) {
-  	  	returnOptions[option] = true;
-  	  	jump = 2;
+        firstChar = options[i+1].substr(0, 1);
+        lastChar = options[i+1].substr(-1)
+        if (firstChar == "'" || firstChar == '"') {
+          for (j = i; j < options.length; j++) {
+            if (options[j].substr(-1) == firstChar) {
+              break;
+            }
+          }
+          selection = options.slice(i+1, j+1);
+          returnOptions[option] = selection.join(' ').replace(RegExp(firstChar, 'g'), '');
+          jump = j - i;
+        }
+        else {
+          returnOptions[option] = options[i+1];
+          jump = 1;
+        }
   	  }
   	}
 

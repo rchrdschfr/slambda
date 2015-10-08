@@ -71,7 +71,7 @@ module.exports = function() {
 }
 ```
 
-####Command configuration
+####Module configuration
 When your Slash Command is invokved, Lambda will send an HTTP(S) request which is determined by this
 configuration.
   
@@ -132,21 +132,23 @@ module.exports = {
 By default, Slash Command text is parsed with the following rules:
 
 * All text before the first space represents a `directive`.
-* After the `directive`, you can specify options
-  * Single-dash-prefix represents a variable to be assigned the value after the space immediate after it
-  * Double-dash-prefexi represents a varaible to be assigned the boolean value `true`
+* After the `directive`, you can specify options prefixed with a single dash
+* a property will be created whose value is whatever comes after the next space
+* Wrap text with quotes if it contains spaces
   
 e.g.
-`/weather 21146 -country USA --short`
+`/create issue -project "Migrate to Mordor" -issuetype Task`
 
 returns an `options` object which looks like this:
 ```
 {
-  directive: '21146',
-  country: 'USA',
-  short: true
+  directive: 'issue',
+  project: "Migrate to Mordor",
+  issuetype: Task
 }
 ```
+
+This object is then available to all configuration options in your module!
 
 #### Settings and Tokens
 
