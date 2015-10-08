@@ -60,6 +60,8 @@ URL is from your API Gateway. Set the method to `GET`.
 
 ##Useage
 
+First, `npm install` to install dependencies.
+
 For each Slash Command you have set up, create a file in the `commands` folder with the same
 name as the Slash Command. For example, if you have a `/weather` Slash Command, create a file
 called `weather.js`. Your file should export an object describing the command, like so:
@@ -144,7 +146,7 @@ returns an `options` object which looks like this:
 {
   directive: 'issue',
   project: "Migrate to Mordor",
-  issuetype: Task
+  issuetype: "Task"
 }
 ```
 
