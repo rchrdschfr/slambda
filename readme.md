@@ -199,4 +199,4 @@ It will then be stored as a ZIP file in the `dist` folder.
 
 #### Deploy the Lambda Function
 
-Check [grunt-aws-lambda package](https://github.com/Tim-B/grunt-aws-lambda) for information on deploying.
+See the [grunt-aws-lambda package](https://github.com/Tim-B/grunt-aws-lambda) for information on deploying.
