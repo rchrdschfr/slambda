@@ -78,8 +78,8 @@ When your Slash Command is invokved, Lambda will send an HTTP(S) request which i
 configuration.
   
 Each option can either be value, or a function that returns a value. If a function, you have access
-to the `options` parameter, which represents the text of the Slash Command parsed according to
-`parseText` option described below.
+to the `options` parameter, which is an object which represents the parsed text of the Slash Command
+according to the `parseText` option described below.
 
 * **hostname** (required): the hostname to send the request to. e.g. 'api.google.com'
 * **path** (required): the path to send the request to. When combined with the hostname option,
@@ -170,6 +170,9 @@ Set any other sensitive information here as well, such as an auth string.
 
 #### Test the Lambda Function
 
+This package includes the fabulous [grunt-aws-lambda package](https://github.com/Tim-B/grunt-aws-lambda) for testing,
+packaing, and deploying. Check its project page for more details.
+
 Create an `event.json` file which contains the event information to send to Lambda. For our purposes it should look like this:
 
 ```
@@ -195,20 +198,5 @@ Create an `event.json` file which contains the event information to send to Lamb
 It will then be stored as a ZIP file in the `dist` folder.
 
 #### Deploy the Lambda Function
-You can use Grunt to deploy your Lambda function. In the project folder,
-create a file `.aws/credentials`. Set your AWS access key
-and secret access key, like so:
-   
-```
-[default]
-aws_access_key_id = <YOUR_ACCESS_KEY_ID>
-aws_secret_access_key = <YOUR_SECRET_ACCESS_KEY>
-```
-   
-See [this document](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html) for more information.
 
-Then type
-
-`$ grunt lambda_deploy`
-
-You can also upload the package manually.
+Check [grunt-aws-lambda package](https://github.com/Tim-B/grunt-aws-lambda) for information on deploying.
