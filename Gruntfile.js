@@ -11,10 +11,5 @@ module.exports = function(grunt) {
         options: {}
       }
     },
-    lambda_deploy: {
-      default: {
-        arn: "arn:aws:lambda:us-west-2:515485644548:function:s2l"
-      }
-    },
   });
 }
