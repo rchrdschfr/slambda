@@ -1,10 +1,6 @@
 var settings = require('./settings.js');
 var helpers = require('./helpers.js');
 
-// set some globals so everyone can have access
-global.settings = settings;
-global.helpers = helpers;
-
 // we can use either HTTP or HTTPS
 var https = require('https');
 var http = require('http');
@@ -48,7 +44,7 @@ exports.handler = function(event, context) {
   else {
     commandOptions = helpers.parseText(event.text);
   }
-  
+
   // set the request options
   var requestOptions = {
     method: 'GET',
@@ -64,19 +60,19 @@ exports.handler = function(event, context) {
   }
   var requestProtocolOption = helpers.isDefined(command.protocol) ? command.protocol : 'https';
   requestProtocol = requestProtocolOption == 'https' ? https : http;
-  
+
   // send the request
   var request = requestProtocol.request(requestOptions, function(response) {
 	var responseBody = '';
 	console.log('Status:', response.statusCode);
 	console.log('Headers:', JSON.stringify(response.headers));
 	response.setEncoding('utf8');
-	
+
 	// grab the response body
 	response.on('data', function(chunk) {
 	  responseBody += chunk;
 	});
-	
+
 	// do something with the response
 	response.on('end', function() {
       console.log('Successfully processed HTTP(S) response');
@@ -85,7 +81,7 @@ exports.handler = function(event, context) {
         if (!helpers.isDefined(command.return.path)) {
 		  context.fail("Path for the return request not set.");
 		}
-		
+
 		var returnOptions = {
 	      hostname: 'hooks.slack.com',
 		  port: 443,
@@ -99,10 +95,10 @@ exports.handler = function(event, context) {
 		  }
 		  returnOptions[key] = helpers.getRequestOption(key, command, commandOptions, event, context, responseBody);
 		};
-        
+
 		var returnRequestProtocolOption = helpers.isDefined(command.return.protocol) ? command.return.protocol : 'https';
         returnRequestProtocol = returnRequestProtocolOption == 'https' ? https : http;
-		
+
 		var returnRequest = returnRequestProtocol.request(returnOptions, function(returnResponse) {
 		  var returnResponseBody = "";
 		  returnResponse.setEncoding('utf8');
